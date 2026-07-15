@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sudheer Anugoju — Backend Software Engineer</title>
+<meta name="description" content="Backend engineer building distributed event pipelines. Kafka, Spring Boot, 10M+ events/day.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e1420;          /* deep slate, dashboard night */
+  --panel:#141c2b;
+  --panel-2:#182236;
+  --line:#22304a;
+  --text:#e6ecf6;
+  --muted:#8fa1bd;
+  --stream:#5cc8ff;      /* event flow cyan */
+  --ok:#4ade80;          /* delivered green */
+  --warn:#fbbf24;        /* metric amber */
+  --fail:#f87171;        /* DLQ red */
+  --font-display:'Space Grotesk',sans-serif;
+  --font-body:'IBM Plex Sans',sans-serif;
+  --font-mono:'IBM Plex Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);line-height:1.6;font-size:16px}
+a{color:var(--stream);text-decoration:none}
+a:hover{text-decoration:underline}
+a:focus-visible,button:focus-visible{outline:2px solid var(--stream);outline-offset:3px;border-radius:2px}
+.wrap{max-width:1040px;margin:0 auto;padding:0 24px}
+
+/* ---------- nav ---------- */
+nav{position:sticky;top:0;z-index:50;background:rgba(14,20,32,.85);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{font-family:var(--font-mono);font-size:14px;color:var(--muted)}
+.logo b{color:var(--text)}
+nav ul{display:flex;gap:28px;list-style:none}
+nav ul a{color:var(--muted);font-size:14px;font-weight:500}
+nav ul a:hover{color:var(--text);text-decoration:none}
+
+/* ---------- hero ---------- */
+header{padding:72px 0 40px;border-bottom:1px solid var(--line)}
+.eyebrow{font-family:var(--font-mono);font-size:13px;color:var(--stream);letter-spacing:.08em}
+h1{font-family:var(--font-display);font-size:clamp(34px,6vw,58px);font-weight:700;line-height:1.08;margin:14px 0 12px}
+.sub{font-size:18px;color:var(--muted);max-width:640px}
+.sub b{color:var(--text);font-weight:600}
+.hero-links{display:flex;gap:14px;margin-top:26px;flex-wrap:wrap}
+.btn{font-family:var(--font-mono);font-size:14px;padding:10px 18px;border:1px solid var(--line);border-radius:6px;color:var(--text);background:var(--panel)}
+.btn:hover{border-color:var(--stream);text-decoration:none}
+.btn.primary{background:var(--stream);color:#08111e;border-color:var(--stream);font-weight:500}
+.btn.primary:hover{filter:brightness(1.1)}
+
+/* ---------- pipeline animation ---------- */
+.pipeline{margin:48px 0 8px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 18px 10px;overflow:hidden}
+.pipeline-head{display:flex;justify-content:space-between;align-items:center;font-family:var(--font-mono);font-size:12px;color:var(--muted);margin-bottom:10px}
+.pipeline-head .live{color:var(--ok)}
+.live::before{content:"●";margin-right:6px;animation:blink 2s infinite}
+@keyframes blink{50%{opacity:.3}}
+#pipe{width:100%;height:auto;display:block}
+.stage-label{font-family:var(--font-mono);font-size:11px;fill:var(--muted)}
+.stage-box{fill:var(--panel-2);stroke:var(--line)}
+.lane{stroke:var(--line);stroke-dasharray:3 5}
+.counter{font-family:var(--font-mono);font-size:11px;fill:var(--stream)}
+.counter.dlq{fill:var(--fail)}
+
+/* ---------- metrics ---------- */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:40px 0}
+.metric{background:var(--panel);padding:22px 20px}
+.metric .num{font-family:var(--font-display);font-size:30px;font-weight:600;color:var(--warn)}
+.metric .lbl{font-size:13px;color:var(--muted);margin-top:4px}
+
+/* ---------- sections ---------- */
+section{padding:64px 0;border-bottom:1px solid var(--line)}
+h2{font-family:var(--font-display);font-size:26px;font-weight:600;margin-bottom:8px}
+.section-note{font-family:var(--font-mono);font-size:13px;color:var(--muted);margin-bottom:36px}
+
+/* experience */
+.job{display:grid;grid-template-columns:200px 1fr;gap:28px;padding:28px 0;border-top:1px solid var(--line)}
+.job:first-of-type{border-top:none}
+.job-meta .co{font-family:var(--font-display);font-weight:600;font-size:18px}
+.job-meta .role{color:var(--muted);font-size:14px;margin-top:2px}
+.job-meta .dates{font-family:var(--font-mono);font-size:12px;color:var(--muted);margin-top:8px}
+.job-body ul{list-style:none}
+.job-body li{padding-left:20px;position:relative;margin-bottom:12px;color:#c5d0e2;font-size:15px}
+.job-body li::before{content:"▸";position:absolute;left:0;color:var(--stream)}
+.job-body b{color:var(--text)}
+.tagline{font-family:var(--font-mono);font-size:12.5px;color:var(--warn);margin-bottom:14px}
+
+/* project */
+.project{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:30px}
+.project h3{font-family:var(--font-display);font-size:21px;margin-bottom:4px}
+.project .stack{font-family:var(--font-mono);font-size:12.5px;color:var(--stream);margin-bottom:16px}
+.project p{color:#c5d0e2;font-size:15px;margin-bottom:12px}
+.project p b{color:var(--text)}
+.badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.badge{font-family:var(--font-mono);font-size:12px;color:var(--warn);border:1px solid var(--line);border-radius:20px;padding:5px 12px}
+
+/* skills */
+.skill-rows{display:grid;gap:14px}
+.skill-row{display:grid;grid-template-columns:200px 1fr;gap:20px;align-items:baseline}
+.skill-row .k{font-family:var(--font-mono);font-size:13px;color:var(--muted)}
+.skill-row .v{font-size:15px;color:#c5d0e2}
+
+/* capabilities */
+.cap-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.cap{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:22px}
+.cap-k{font-family:var(--font-mono);font-size:13px;color:var(--stream);margin-bottom:10px}
+.cap p{font-size:14px;color:#c5d0e2;line-height:1.55}
+
+/* contact */
+footer{padding:72px 0 90px;text-align:center}
+footer h2{font-size:30px}
+footer p{color:var(--muted);max-width:480px;margin:10px auto 30px}
+.foot-note{font-family:var(--font-mono);font-size:12px;color:var(--muted);margin-top:56px;opacity:.7}
+
+@media(max-width:760px){
+  .metrics{grid-template-columns:repeat(2,1fr)}
+  .cap-grid{grid-template-columns:1fr}
+  .job,.skill-row{grid-template-columns:1fr;gap:8px}
+  nav ul{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  .live::before{animation:none}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <span class="logo"><b>sudheer</b>@backend:~$</span>
+    <ul>
+      <li><a href="#capabilities">What I do</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#project">Project</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header>
+  <div class="wrap">
+    <div class="eyebrow">BACKEND SOFTWARE ENGINEER · DISTRIBUTED SYSTEMS</div>
+    <h1>Sudheer Anugoju</h1>
+    <p class="sub">I build <b>backend systems that don't lose data</b> — APIs, event pipelines, and the reliability engineering around them. Currently operating a platform moving <b>10M+ notifications a day</b>. Java · Spring Boot · Kafka.</p>
+    <div class="hero-links">
+      <a class="btn primary" href="#contact">Get in touch</a>
+      <a class="btn" href="https://github.com/4sudheer4" target="_blank" rel="noopener">GitHub ↗</a>
+      <a class="btn" href="https://linkedin.com/in/sudheeranugoju" target="_blank" rel="noopener">LinkedIn ↗</a>
+    </div>
+
+    <!-- signature: live pipeline -->
+    <div class="pipeline" aria-label="Animated diagram of an event pipeline: producers publish to Kafka partitions, a consumer delivers to SFMC, failures route to a dead-letter queue">
+      <div class="pipeline-head">
+        <span>notification-pipeline — live view</span>
+        <span class="live">STREAMING</span>
+      </div>
+      <svg id="pipe" viewBox="0 0 960 240" xmlns="http://www.w3.org/2000/svg" role="img">
+        <!-- lanes -->
+        <line class="lane" x1="150" y1="60"  x2="810" y2="60"/>
+        <line class="lane" x1="150" y1="105" x2="810" y2="105"/>
+        <line class="lane" x1="150" y1="150" x2="810" y2="150"/>
+        <path class="lane" d="M600 150 C 660 150 660 205 720 205" fill="none"/>
+        <!-- producers -->
+        <g>
+          <rect class="stage-box" x="40" y="42"  width="110" height="36" rx="6"/>
+          <rect class="stage-box" x="40" y="87"  width="110" height="36" rx="6"/>
+          <rect class="stage-box" x="40" y="132" width="110" height="36" rx="6"/>
+          <text class="stage-label" x="95" y="64"  text-anchor="middle">producer:BU-1</text>
+          <text class="stage-label" x="95" y="109" text-anchor="middle">producer:BU-2</text>
+          <text class="stage-label" x="95" y="154" text-anchor="middle">producer:BU-3</text>
+        </g>
+        <!-- kafka topic -->
+        <g>
+          <rect class="stage-box" x="330" y="30" width="150" height="150" rx="8"/>
+          <text class="stage-label" x="405" y="50" text-anchor="middle" fill="#e6ecf6">kafka: notifications</text>
+          <text class="stage-label" x="405" y="70"  text-anchor="middle">partition 0</text>
+          <text class="stage-label" x="405" y="112" text-anchor="middle">partition 1</text>
+          <text class="stage-label" x="405" y="158" text-anchor="middle">partition 2</text>
+        </g>
+        <!-- consumer -->
+        <rect class="stage-box" x="560" y="75" width="120" height="60" rx="8"/>
+        <text class="stage-label" x="620" y="100" text-anchor="middle" fill="#e6ecf6">spring-kafka</text>
+        <text class="stage-label" x="620" y="117" text-anchor="middle">consumer</text>
+        <!-- sfmc -->
+        <rect class="stage-box" x="790" y="75" width="120" height="60" rx="8"/>
+        <text class="stage-label" x="850" y="100" text-anchor="middle" fill="#e6ecf6">MuleSoft → SFMC</text>
+        <text class="stage-label" x="850" y="117" text-anchor="middle" id="delivered-count">delivered: 0</text>
+        <!-- dlq -->
+        <rect class="stage-box" x="720" y="185" width="120" height="40" rx="8" stroke="#3d2536"/>
+        <text class="stage-label" x="780" y="203" text-anchor="middle" fill="#f87171">dead-letter queue</text>
+        <text class="counter dlq" x="780" y="218" text-anchor="middle" id="dlq-count">retrying: 0</text>
+        <g id="events"></g>
+      </svg>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="metrics" role="list">
+    <div class="metric" role="listitem"><div class="num">10M+</div><div class="lbl">events processed daily</div></div>
+    <div class="metric" role="listitem"><div class="num">~1/100K</div><div class="lbl">failure rate after idempotency &amp; retry work</div></div>
+    <div class="metric" role="listitem"><div class="num">60 min</div><div class="lbl">to catch an 8M failed-send incident</div></div>
+    <div class="metric" role="listitem"><div class="num">P99 &lt; 20ms</div><div class="lbl">StreamForge under 500 concurrent users</div></div>
+  </div>
+</div>
+
+<section id="capabilities">
+  <div class="wrap">
+    <h2>What I do</h2>
+    <p class="section-note">// backend engineering, end to end</p>
+    <div class="cap-grid">
+      <div class="cap">
+        <div class="cap-k">APIs &amp; services</div>
+        <p>REST and gRPC/Protocol Buffers services in Spring Boot; contract-aware integration against rate-limited third-party APIs (SFMC, MuleSoft) with per-tenant quota enforcement.</p>
+      </div>
+      <div class="cap">
+        <div class="cap-k">Data layer</div>
+        <p>PostgreSQL, MySQL, Redis — idempotent writes, atomic operations (SETNX, Lua), retention design from 60-day operational stores to 10-year regulatory archives, self-healing reconciliation jobs.</p>
+      </div>
+      <div class="cap">
+        <div class="cap-k">Reliability engineering</div>
+        <p>Exponential-backoff retries, circuit breaking, dead-letter queues, rate limiting (Resilience4j) — validated with failure-injection testing: SIGKILL, broker failover, forced rebalances.</p>
+      </div>
+      <div class="cap">
+        <div class="cap-k">Observability &amp; operations</div>
+        <p>Prometheus, Grafana, Splunk; per-partition lag alerting against delivery SLAs; real-time anomaly detection that caught an 8M-send incident in 60 minutes.</p>
+      </div>
+      <div class="cap">
+        <div class="cap-k">Security</div>
+        <p>HMAC-SHA256 JWT payload encryption, PII protection across trust boundaries, Azure Key Vault secrets management.</p>
+      </div>
+      <div class="cap">
+        <div class="cap-k">Delivery &amp; testing</div>
+        <p>Docker, Kubernetes, GitHub Actions CI/CD; Gatling load testing to P99 targets; Claude Code as a daily engineering multiplier.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="wrap">
+    <h2>Experience</h2>
+    <p class="section-note">// what I've built and operated</p>
+
+    <div class="job">
+      <div class="job-meta">
+        <div class="co">Navy Federal Credit Union</div>
+        <div class="role">Software Engineer</div>
+        <div class="dates">Aug 2023 — present</div>
+      </div>
+      <div class="job-body">
+        <p class="tagline">multi-tenant event-streaming notification platform · Kafka · Spring Boot · MuleSoft/SFMC</p>
+        <ul>
+          <li>Build and operate a platform routing <b>10M+ daily transactional notifications</b> from 800+ upstream sources across 10 business units — partitioned per business unit with a primary/standby consumer topology for failure containment.</li>
+          <li>Achieved <b>effectively-once delivery</b> on at-least-once infrastructure — closed the offset-commit gap with non-blocking retry/DLQ handoff plus atomic Redis idempotency, validated under SIGKILL, broker-failover, and forced-rebalance tests.</li>
+          <li>Replaced silent failure drops with <b>exponential-backoff retries and a queryable dead-letter store</b> — per-BU alerting, daily digests, audited replay for compliance-sensitive notifications.</li>
+          <li>Built <b>real-time anomaly detectors</b> (sliding-window spike + failure-rate evaluation) that caught an 8M failed-send incident within 60 minutes.</li>
+          <li>Operate an email <b>archival pipeline (10M+ records/day)</b> for 10-year regulatory retention with self-healing reconciliation, and an SMS reply-capture service secured with HMAC-SHA256 JWT encryption over gRPC.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="job">
+      <div class="job-meta">
+        <div class="co">Salesforce</div>
+        <div class="role">Success Engineer, Marketing Cloud</div>
+        <div class="dates">Jun 2019 — Jan 2022</div>
+      </div>
+      <div class="job-body">
+        <ul>
+          <li>Resolved complex technical escalations across <b>100+ enterprise Marketing Cloud accounts</b> — debugging REST/SOAP API integrations, SSO flows, server-side JavaScript, and complex SQL in production environments.</li>
+          <li>Contributed to <b>Salesforce's public-facing product documentation and API references</b>; delivered technical enablement that measurably cut support escalations.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="project">
+  <div class="wrap">
+    <h2>Project</h2>
+    <p class="section-note">// distributed-systems patterns, built from scratch</p>
+    <div class="project">
+      <h3>StreamForge — Distributed Event Pipeline</h3>
+      <div class="stack">Java 21 · Spring Boot 3.3 · Kafka · Redis · PostgreSQL · GCP Cloud Run · Prometheus · Grafana</div>
+      <p>A production-grade event pipeline built to go deep on the patterns behind high-volume financial systems — <b>SHA-256 idempotent deduplication</b>, Redis sliding-window rate limiting with <b>atomic Lua scripts</b>, and Kafka idempotent producers with <b>DLQ routing</b> and exponential-backoff retries.</p>
+      <p>Load-tested with Gatling at 500 concurrent users holding <b>P99 &lt; 20ms</b>; deployed on GCP Cloud Run through GitHub Actions CI/CD.</p>
+      <div class="badges">
+        <span class="badge">idempotency</span><span class="badge">rate limiting</span><span class="badge">DLQ routing</span><span class="badge">load testing</span><span class="badge">CI/CD</span>
+      </div>
+      <p style="margin-top:20px"><a href="https://github.com/4sudheer4/streamforge" target="_blank" rel="noopener">View source on GitHub ↗</a></p>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="wrap">
+    <h2>Skills</h2>
+    <p class="section-note">// tools I work with daily</p>
+    <div class="skill-rows">
+      <div class="skill-row"><span class="k">languages</span><span class="v">Java · Python · SQL · JavaScript</span></div>
+      <div class="skill-row"><span class="k">frameworks</span><span class="v">Spring Boot · Spring Kafka · Spring Data JPA · gRPC · Protocol Buffers</span></div>
+      <div class="skill-row"><span class="k">infrastructure</span><span class="v">Kafka (Azure Event Hubs) · Redis · PostgreSQL · MySQL · Oracle · Azure Data Lake · MuleSoft</span></div>
+      <div class="skill-row"><span class="k">devops &amp; observability</span><span class="v">Docker · Kubernetes · GitHub Actions · GCP Cloud Run · Jenkins · Prometheus · Grafana · Splunk · Kibana</span></div>
+      <div class="skill-row"><span class="k">ai-assisted dev</span><span class="v">Claude Code — daily driver for scaffolding, review, and iteration</span></div>
+    </div>
+  </div>
+</section>
+
+<footer id="contact">
+  <div class="wrap">
+    <h2>Let's talk distributed systems.</h2>
+    <p>Open to backend roles — remote or SF Bay Area. The fastest way to reach me is email.</p>
+    <div class="hero-links" style="justify-content:center">
+      <a class="btn primary" href="mailto:sudheeranugoju4@gmail.com">sudheeranugoju4@gmail.com</a>
+      <a class="btn" href="https://github.com/4sudheer4" target="_blank" rel="noopener">GitHub ↗</a>
+      <a class="btn" href="https://linkedin.com/in/sudheeranugoju" target="_blank" rel="noopener">LinkedIn ↗</a>
+    </div>
+    <div class="foot-note">© 2026 Sudheer Anugoju · built with an event loop and a dead-letter queue</div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const svg = document.getElementById('pipe');
+  const layer = document.getElementById('events');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let delivered = 0, dlq = 0;
+  const deliveredEl = document.getElementById('delivered-count');
+  const dlqEl = document.getElementById('dlq-count');
+  const LANES = [
+    {y:60,  color:'#5cc8ff'},
+    {y:105, color:'#5cc8ff'},
+    {y:150, color:'#5cc8ff'}
+  ];
+  if (reduced) { deliveredEl.textContent = 'delivered: 10M+/day'; dlqEl.textContent='retrying: automated'; return; }
+
+  function spawn(){
+    const lane = LANES[Math.floor(Math.random()*LANES.length)];
+    const fails = Math.random() < 0.12;
+    const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    dot.setAttribute('r','4');
+    dot.setAttribute('cy',lane.y);
+    dot.setAttribute('cx','150');
+    dot.setAttribute('fill',lane.color);
+    layer.appendChild(dot);
+    const t0 = performance.now();
+    const D1 = 2200; // producer -> consumer
+    function step(t){
+      const p = Math.min((t - t0)/D1, 1);
+      // ease
+      const e = p<.5 ? 2*p*p : 1-Math.pow(-2*p+2,2)/2;
+      dot.setAttribute('cx', 150 + e*(620-150));
+      dot.setAttribute('cy', lane.y + e*(105-lane.y));
+      if (p<1){ requestAnimationFrame(step); return; }
+      // consumer -> destination
+      const t1 = performance.now(), D2 = 1200;
+      if (fails) dot.setAttribute('fill','#f87171');
+      function step2(t){
+        const q = Math.min((t - t1)/D2, 1);
+        const e2 = q*q*(3-2*q);
+        if (fails){
+          dot.setAttribute('cx', 620 + e2*(780-620));
+          dot.setAttribute('cy', 105 + e2*(200-105));
+        } else {
+          dot.setAttribute('cx', 620 + e2*(845-620));
+          dot.setAttribute('cy', 105);
+        }
+        if (q<1){ requestAnimationFrame(step2); return; }
+        if (fails){ dlq++; dlqEl.textContent = 'retrying: '+dlq; }
+        else { delivered++; deliveredEl.textContent = 'delivered: '+delivered.toLocaleString(); }
+        dot.remove();
+      }
+      requestAnimationFrame(step2);
+    }
+    requestAnimationFrame(step);
+  }
+  setInterval(spawn, 550);
+  spawn();
+})();
+</script>
+</body>
+</html>
